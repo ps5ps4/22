@@ -1,70 +1,149 @@
-/* Copyright (C) 2023-2025 anonymous
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 
-This file is part of PSFree.
+<title>حسين للالعاب الالكترونيه</title>
 
-PSFree is free software: you can redistribute it and/or modify
-it under the terms of the GNU Affero General Public License as
-published by the Free Software Foundation, either version 3 of the
-License, or (at your option) any later version.
+<link rel="stylesheet" href="./سب_files/style.css">
 
-PSFree is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU Affero General Public License for more details.
+<style>
+html, body {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+}
 
-You should have received a copy of the GNU Affero General Public License
-along with this program.  If not, see <https://www.gnu.org/licenses/>.  */
+body {
+    text-align: center;
 
-// webkitgtk 2.34.4 was used to develop the portable parts of the exploit
-// before moving on to ps4 8.03
-//
-// webkitgtk 2.34.4 was built with cmake variable ENABLE_JIT=OFF, that variable
-// can affect the size of SerializedScriptValue
-//
-// this target is no longer supported
+    background-image: url("./icon0.jpg");
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
 
-// target firmware format used by PSFree
-//
-// 0xC_MM_mm
-//
-// * C console - PS4 (0) or PS5 (1) (1 bit)
-// * MM major version - integer part of the firmware version (8 bits)
-// * mm minor version - fractional part of the firmware version (8 bits)
-//
-// examples:
-// * PS4 10.00 -> C = 0 MM = 10 mm = 0 -> 0x0_10_00
-// * PS5 4.51 -> C = 1 MM = 4 mm = 51 -> 0x1_04_51
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
 
-// check if value is in Binary Coded Decimal format
-// assumes integer and is in the range [0, 0xffff]
-function check_bcd(value) {
-    for (let i = 0; i <= 12; i += 4) {
-        const nibble = (value >>> i) & 0xf;
+body > h1:first-of-type {
+    color: white;
+    font-size: 45px;
+    margin: 0 0 40px 0;
+    text-shadow:
+        2px 2px 5px #000,
+        0 0 10px #000;
+}
 
-        if (nibble > 9) {
-            return false;
+#msgs {
+    color: white;
+    font-size: 32px !important;
+    margin: 0 !important;
+    text-shadow:
+        2px 2px 5px #000,
+        0 0 10px #000;
+}
+</style>
+
+</head>
+
+<body>
+
+<script>
+var uaFull = navigator.userAgent;
+var match = uaFull.match(/PlayStation 4[ /]([\d.]+)/i);
+var isPS4 = match !== null;
+var fwVersion = isPS4 ? match[1] : "Unknown";
+var fwNum = parseFloat(fwVersion);
+
+function onScriptError() {
+    msgs.innerHTML = "Content not Found! - Clear Browser Data and Re-Install Cache ...";
+}
+
+if (!isPS4) {
+    document.addEventListener("DOMContentLoaded", () => {
+        msgs.innerHTML = "يعمل من نظام 7.00 الى 13.52";
+    });
+} else {
+    if (window.applicationCache.status == '0') {
+        if (fwNum == 5.05 || fwNum == 5.07) {
+            window.location.replace("cache505.html");
+        } else if (fwNum >= 7.00 && fwNum <= 8.52) {
+            window.location.replace("cache700.html");
+        } else if (fwNum >= 9.00 && fwNum <= 9.60) {
+            window.location.replace("cache900.html");
+        } else if (fwNum >= 10.00 && fwNum <= 11.02) {
+            window.location.replace("cachecss.html");
+        } else if (fwNum >= 11.50 && fwNum <= 13.52) {
+            window.location.replace("cacheslopkit.html");
+        } else {
+            document.addEventListener("DOMContentLoaded", () => {
+                msgs.innerHTML = 'Unsupported Firmware: <span style="color: red;">' + fwVersion + '</span>';
+            });
+        }
+    } else {
+        if (fwNum == 5.05 || fwNum == 5.07) {
+            var script = document.createElement('script');
+            script.src = "505/exploit.js";
+            script.onerror = onScriptError;
+            document.head.appendChild(script);
+        }
+        else if (fwNum >= 7.00 && fwNum <= 8.52) {
+            var script = document.createElement('script');
+            script.type = 'module';
+            script.src = "700/alert.js";
+            script.onerror = onScriptError;
+            document.head.appendChild(script);
+        }
+        else if (fwNum >= 9.00 && fwNum <= 9.60) {
+            var script = document.createElement('script');
+            script.type = 'module';
+            script.src = "900/alert.js";
+            script.onerror = onScriptError;
+            document.head.appendChild(script);
+        }
+        else if (fwNum >= 10.00 && fwNum <= 11.02) {
+            var script = document.createElement('script');
+            script.src = "css/main.js";
+            script.onerror = onScriptError;
+            script.onload = function () {
+                setTimeout(function () {
+                    doJb();
+                }, 500);
+            };
+            document.head.appendChild(script);
+        }
+        else if (fwNum >= 11.50 && fwNum <= 12.02) {
+            var script = document.createElement('script');
+            script.type = 'module';
+            script.src = "slopkit/chain_lapse.js";
+            script.onerror = onScriptError;
+            document.head.appendChild(script);
+        }
+        else if (fwNum >= 12.50 && fwNum <= 13.00) {
+            var script = document.createElement('script');
+            script.type = 'module';
+            script.src = "slopkit/chain_poops.js";
+            script.onerror = onScriptError;
+            document.head.appendChild(script);
+        }
+        else if (fwNum >= 13.02 && fwNum <= 13.52) {
+            var script = document.createElement('script');
+            script.type = 'module';
+            script.src = "slopkit/jb.js?v=10";
+            script.onerror = onScriptError;
+            document.head.appendChild(script);
         }
     }
-
-    return true;
 }
+</script>
 
-export function set_target(value) {
-    if (!Number.isInteger(value)) {
-        throw TypeError(`value not an integer: ${value}`);
-    }
+<h1>حسين للالعاب الالكترونيه</h1>
 
-    if (value >= 0x20000 || value < 0) {
-        throw RangeError(`value >= 0x20000 or value < 0: ${value}`);
-    }
+<h1 id="msgs">يعمل من نظام 7.00 الى 13.52</h1>
 
-    const version = value & 0xffff;
-    if (!check_bcd(version)) {
-        throw RangeError(`value & 0xffff not in BCD format ${version}`);
-    }
-
-    target = value;
-}
-
-export let target = null;
-set_target(0x900);
+</body>
+</html>
